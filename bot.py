@@ -29,7 +29,6 @@ from handlers.transaction import (
     new_expense,
     new_income,
     type_chosen,
-    back_to_type,
     category_chosen,
     amount_received,
     note_received,
@@ -122,7 +121,6 @@ def main() -> None:
             ],
             CHOOSING_CATEGORY: [
                 CallbackQueryHandler(category_chosen, pattern=r"^cat_\d+$"),
-                CallbackQueryHandler(back_to_type,    pattern="^back_to_type$"),
             ],
             ENTERING_AMOUNT: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, amount_received),

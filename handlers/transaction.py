@@ -60,7 +60,7 @@ async def new_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     context.user_data["tx_type"] = "expense"
     categories = await get_categories(update.effective_user.id, "expense")
     await query.edit_message_text(
-        f"📝 <b>Новая транзакция</b>\n{TYPE_LABEL['expense']}\n\nВыберите категорию:",
+        f"{TYPE_LABEL['expense']}\n\nВыберите категорию:",
         reply_markup=categories_kb(categories),
         parse_mode="HTML",
     )
@@ -74,7 +74,7 @@ async def new_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     context.user_data["tx_type"] = "income"
     categories = await get_categories(update.effective_user.id, "income")
     await query.edit_message_text(
-        f"📝 <b>Новая транзакция</b>\n{TYPE_LABEL['income']}\n\nВыберите категорию:",
+        f"{TYPE_LABEL['income']}\n\nВыберите категорию:",
         reply_markup=categories_kb(categories),
         parse_mode="HTML",
     )
@@ -96,7 +96,7 @@ async def type_chosen(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     label = TYPE_LABEL[tx_type]
 
     await query.edit_message_text(
-        f"📝 <b>Новая транзакция</b>\n{label}\n\nВыберите категорию:",
+        f"{label}\n\nВыберите категорию:",
         reply_markup=categories_kb(categories),
         parse_mode="HTML",
     )
@@ -134,7 +134,6 @@ async def category_chosen(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     label = TYPE_LABEL[tx_type]
 
     msg = await query.edit_message_text(
-        f"📝 <b>Новая транзакция</b>\n"
         f"{label}  ·  {cat_label}\n\n"
         f"💰 Введите сумму <b>(в L)</b>:\n"
         f"<i>Например: 150 или 1 500.50</i>",
@@ -178,7 +177,6 @@ async def amount_received(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     prompt_id = context.user_data.get("prompt_msg_id")
 
     note_text = (
-        f"📝 <b>Новая транзакция</b>\n"
         f"{label}  ·  {cat_label}\n"
         f"💰 <b>{fmt_amount(amount)}</b>\n\n"
         f"✍️ Добавьте заметку или пропустите:"

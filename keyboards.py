@@ -54,7 +54,7 @@ def categories_kb(categories) -> InlineKeyboardMarkup:
             row = []
     if row:
         rows.append(row)
-    rows.append([InlineKeyboardButton("🔙  Назад", callback_data="back_to_type")])
+    rows.append([InlineKeyboardButton("🔙  Назад", callback_data="back_to_menu")])
     return InlineKeyboardMarkup(rows)
 
 
