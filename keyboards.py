@@ -6,16 +6,26 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 def main_menu_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("➕  Новая транзакция", callback_data="new_transaction")],
         [
-            InlineKeyboardButton("📊  Статистика", callback_data="stats"),
-            InlineKeyboardButton("📋  История",    callback_data="history"),
+            InlineKeyboardButton("▪️ Расход",  callback_data="new_expense"),
+            InlineKeyboardButton("▫️ Доход",   callback_data="new_income"),
         ],
-        [InlineKeyboardButton("🗂  Категории", callback_data="categories_menu")],
         [
-            InlineKeyboardButton("🔄  Регулярные", callback_data="recurring"),
-            InlineKeyboardButton("💰  Лимиты",     callback_data="limits"),
+            InlineKeyboardButton("📊 Статистика", callback_data="stats"),
+            InlineKeyboardButton("📋 История",    callback_data="history"),
+            InlineKeyboardButton("🔘 Ещё",        callback_data="more_menu"),
         ],
+    ])
+
+
+def more_menu_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("🗂 Категории",   callback_data="categories_menu")],
+        [
+            InlineKeyboardButton("🔄 Регулярные", callback_data="recurring"),
+            InlineKeyboardButton("💰 Лимиты",     callback_data="limits"),
+        ],
+        [InlineKeyboardButton("🔙 Назад",        callback_data="back_to_menu")],
     ])
 
 

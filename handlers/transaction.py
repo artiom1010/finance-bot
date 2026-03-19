@@ -39,7 +39,7 @@ TYPE_LABEL = {"expense": "📉 Расход", "income": "📈 Доход"}
 
 
 # ---------------------------------------------------------------------------
-# Шаг 1: выбор типа
+# Шаг 1: выбор типа (или прямой вход с главного экрана)
 # ---------------------------------------------------------------------------
 
 async def new_transaction(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -51,6 +51,34 @@ async def new_transaction(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         parse_mode="HTML",
     )
     return CHOOSING_TYPE
+
+
+async def new_expense(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Прямой вход с главного экрана — тип expense уже выбран."""
+    query = update.callback_query
+    await query.answer()
+    context.user_data["tx_type"] = "expense"
+    categories = await get_categories(update.effective_user.id, "expense")
+    await query.edit_message_text(
+        f"📝 <b>Новая транзакция</b>\n{TYPE_LABEL['expense']}\n\nВыберите категорию:",
+        reply_markup=categories_kb(categories),
+        parse_mode="HTML",
+    )
+    return CHOOSING_CATEGORY
+
+
+async def new_income(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Прямой вход с главного экрана — тип income уже выбран."""
+    query = update.callback_query
+    await query.answer()
+    context.user_data["tx_type"] = "income"
+    categories = await get_categories(update.effective_user.id, "income")
+    await query.edit_message_text(
+        f"📝 <b>Новая транзакция</b>\n{TYPE_LABEL['income']}\n\nВыберите категорию:",
+        reply_markup=categories_kb(categories),
+        parse_mode="HTML",
+    )
+    return CHOOSING_CATEGORY
 
 
 # ---------------------------------------------------------------------------

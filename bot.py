@@ -23,9 +23,11 @@ from telegram.error import NetworkError
 from config import BOT_TOKEN
 from database import init_db
 from handlers.admin import admin_command, admin_show_table
-from handlers.start import show_main_menu
+from handlers.start import show_main_menu, show_more_menu
 from handlers.transaction import (
     new_transaction,
+    new_expense,
+    new_income,
     type_chosen,
     back_to_type,
     category_chosen,
@@ -111,6 +113,8 @@ def main() -> None:
     transaction_conv = ConversationHandler(
         entry_points=[
             CallbackQueryHandler(new_transaction, pattern="^new_transaction$"),
+            CallbackQueryHandler(new_expense,     pattern="^new_expense$"),
+            CallbackQueryHandler(new_income,      pattern="^new_income$"),
         ],
         states={
             CHOOSING_TYPE: [
@@ -242,6 +246,7 @@ def main() -> None:
 
     # Главное меню (back_to_menu вне разговора)
     app.add_handler(CallbackQueryHandler(show_main_menu, pattern="^back_to_menu$"))
+    app.add_handler(CallbackQueryHandler(show_more_menu, pattern="^more_menu$"))
 
     app.add_error_handler(_error_handler)
 

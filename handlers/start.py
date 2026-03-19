@@ -7,7 +7,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 from database import upsert_user, get_month_balance
-from keyboards import main_menu_kb
+from keyboards import main_menu_kb, more_menu_kb
 from utils import fmt_amount, fmt_signed, MONTHS_GEN
 
 
@@ -20,18 +20,16 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     expense = balance["expense"]
     net     = income - expense
 
-    now = datetime.now()
+    now   = datetime.now()
     month = MONTHS_GEN[now.month]
-
-    net_str = fmt_signed(net)
+    net_str  = fmt_signed(net)
     net_icon = "📈" if net >= 0 else "📉"
 
     text = (
-        f"👋 Привет, <b>{user.first_name}</b>!\n\n"
-        f"📊 <b>Баланс за {month} {now.year}:</b>\n"
-        f"├ 📈 Доходы:   <code>{fmt_amount(income)}</code>\n"
-        f"├ 📉 Расходы:  <code>{fmt_amount(expense)}</code>\n"
-        f"└ {net_icon} Итого:    <code>{net_str}</code>"
+        f"👋 <b>{user.first_name}</b>\n"
+        f"🪙 <b>{month} {now.year}</b>  "
+        f"▪️ {fmt_amount(expense)}  ▫️ {fmt_amount(income)}  "
+        f"{net_icon} <code>{net_str}</code>"
     )
 
     query = update.callback_query
@@ -43,3 +41,9 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await query.message.reply_text(text, reply_markup=main_menu_kb(), parse_mode="HTML")
     else:
         await update.message.reply_text(text, reply_markup=main_menu_kb(), parse_mode="HTML")
+
+
+async def show_more_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    query = update.callback_query
+    await query.answer()
+    await query.edit_message_reply_markup(reply_markup=more_menu_kb())
