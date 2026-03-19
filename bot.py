@@ -18,8 +18,11 @@ from telegram.ext import (
     filters,
 )
 
+from telegram.error import NetworkError
+
 from config import BOT_TOKEN
 from database import init_db
+from handlers.admin import admin_command, admin_show_table
 from handlers.start import show_main_menu
 from handlers.transaction import (
     new_transaction,
@@ -82,6 +85,13 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logging.getLogger("httpx").setLevel(logging.WARNING)
+
+
+async def _error_handler(update: object, context) -> None:
+    if isinstance(context.error, NetworkError):
+        logging.warning("Сетевая ошибка (автоматический повтор): %s", context.error)
+        return
+    logging.error("Необработанная ошибка:", exc_info=context.error)
 
 
 async def _post_init(app: Application) -> None:
@@ -195,6 +205,8 @@ def main() -> None:
 
     # ── Регистрация хэндлеров ────────────────────────────────────────────────
     app.add_handler(CommandHandler("start", show_main_menu))
+    app.add_handler(CommandHandler("admin", admin_command))
+    app.add_handler(CallbackQueryHandler(admin_show_table, pattern=r"^admin_table_\w+$"))
     app.add_handler(transaction_conv)
     app.add_handler(add_category_conv)
     app.add_handler(add_limit_conv)
@@ -230,6 +242,8 @@ def main() -> None:
 
     # Главное меню (back_to_menu вне разговора)
     app.add_handler(CallbackQueryHandler(show_main_menu, pattern="^back_to_menu$"))
+
+    app.add_error_handler(_error_handler)
 
     # ── JobQueue: ежедневные напоминания о регулярных транзакциях ─────────────
     app.job_queue.run_daily(

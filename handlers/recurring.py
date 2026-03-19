@@ -340,6 +340,21 @@ async def confirm_recurring(
 
 
 # ---------------------------------------------------------------------------
+# Вспомогательная задача: удаление сообщения
+# ---------------------------------------------------------------------------
+
+async def _delete_message_job(context: ContextTypes.DEFAULT_TYPE) -> None:
+    data = context.job.data
+    try:
+        await context.bot.delete_message(
+            chat_id=data["chat_id"],
+            message_id=data["message_id"],
+        )
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
 # Ежедневная задача JobQueue
 # ---------------------------------------------------------------------------
 
@@ -363,16 +378,19 @@ async def check_recurring_job(context: ContextTypes.DEFAULT_TYPE) -> None:
     for user_id, items in by_user.items():
         text = "🔔 <b>Напоминание о регулярных транзакциях!</b>\n\n"
         for item in items:
-            text += (
-                f"• {item['cat_emoji']} <b>{item['label']}</b>  "
-                f"{fmt_amount(item['amount'])}\n"
-            )
+            text += f"• <b>{item['label']}</b>  {fmt_amount(item['amount'])}\n"
+        text += "\n<i>Сообщение удалится через 15 секунд</i>"
         try:
-            await context.bot.send_message(
+            msg = await context.bot.send_message(
                 chat_id=user_id,
                 text=text,
                 reply_markup=recurring_confirm_kb(items),
                 parse_mode="HTML",
+            )
+            context.job_queue.run_once(
+                _delete_message_job,
+                when=15,
+                data={"chat_id": user_id, "message_id": msg.message_id},
             )
         except Exception:
             pass

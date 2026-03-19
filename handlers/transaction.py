@@ -13,8 +13,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
+
+log = logging.getLogger(__name__)
 
 from database import (
     get_categories,
@@ -215,6 +219,10 @@ async def _save_transaction(
 
     tx_id = await add_transaction(user_id, cat_id, amount, note=note)
     tx    = await get_transaction_details(tx_id)
+
+    # DEBUG: лог новой транзакции (закомментируй если не нужен)
+    log.info("[TX] user=%s  type=%s  cat=%s  amount=%.2f  note=%s  tx_id=%s",
+             user_id, tx_type, cat_label, amount, repr(note), tx_id)
 
     label    = TYPE_LABEL[tx_type]
     date_str = fmt_date(tx["created_at"]) if tx else "—"
