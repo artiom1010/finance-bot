@@ -8,7 +8,7 @@ from telegram.ext import ContextTypes
 
 from database import upsert_user, get_month_balance
 from keyboards import main_menu_kb, more_menu_kb
-from utils import fmt_amount, fmt_signed, MONTHS_GEN
+from utils import fmt_amount, fmt_signed
 
 
 async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -20,16 +20,13 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     expense = balance["expense"]
     net     = income - expense
 
-    now   = datetime.now()
-    month = MONTHS_GEN[now.month]
-    net_str  = fmt_signed(net)
-    net_icon = "📈" if net >= 0 else "📉"
+    now     = datetime.now()
+    net_str = fmt_signed(net)
 
     text = (
-        f"👋 <b>{user.first_name}</b>\n"
-        f"🪙 <b>{month} {now.year}</b>  "
-        f"▪️ {fmt_amount(expense)}  ▫️ {fmt_amount(income)}  "
-        f"{net_icon} <code>{net_str}</code>"
+        f"<i>{now.day:02d}.{now.month:02d}.{now.year}</i>\n\n"
+        f"🪙 <b>Баланс: {net_str}</b>\n"
+        f"· Расходы: {fmt_amount(expense)} · Доходы: {fmt_amount(income)}"
     )
 
     query = update.callback_query
