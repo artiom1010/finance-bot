@@ -7,8 +7,8 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 def main_menu_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("➕ Добавить расход", callback_data="new_expense"),
-            InlineKeyboardButton("➕ Добавить доход",  callback_data="new_income"),
+            InlineKeyboardButton("➕ Расход", callback_data="new_expense"),
+            InlineKeyboardButton("➕ Доход",  callback_data="new_income"),
         ],
         [
             InlineKeyboardButton("🗞 Статистика", callback_data="stats"),
